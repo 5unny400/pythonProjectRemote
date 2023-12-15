@@ -10,3 +10,9 @@ zipped = zip(list1, list2)  # 将迭代器转换为列表
 result_list = list(zipped)
 
 print(result_list)
+
+
+
+unsorted_tuple = tuple([list1, list2])
+for e in unsorted_tuple:
+    print(e)
