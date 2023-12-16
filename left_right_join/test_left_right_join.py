@@ -22,13 +22,10 @@ class Post(db.Model):
 left_outer_join_query = db.session.query(User, Post).outerjoin(Post, User.id == Post.user_id)
 
 # 右外连接
-right_outer_join_query = db.session.query(User, Post).outerjoin(User, User.id == Post.user_id)
+right_outer_join_query = db.session.query(User, Post).outerjoin(Post, User.id == Post.user_id)
 
 # 全外连接
 full_outer_join_query = db.session.query(User, Post).outerjoin(Post, User.id == Post.user_id, full=True)
 
 # 内连接查询
 inner_join_query = db.session.query(User, Post).join(Post)
-
-# 左外连接
-right_join_query = db.session.query(User, Post).join(Post, isouter=True)
