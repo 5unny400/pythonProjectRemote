@@ -17,8 +17,9 @@ nested_json_string = json.dumps(first_encode)
 
 print(nested_json_string)
 
-
+# 第一次 JSON 解码
 json_loads = json.loads(nested_json_string)
 print(json_loads)
+# 第一次 JSON 解码
 json_loads2 = json.loads(json_loads)
 print(json_loads2)
