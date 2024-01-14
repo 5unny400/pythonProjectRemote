@@ -18,7 +18,7 @@ plt.figure(figsize=(12, 6))
 # 去除背景网格线
 plt.grid(True)
 # 绘制箱型线图
-sns.boxplot(data=monthly_data, palette='Blues', width=0.5, fliersize=0)
+sns.boxplot(data=monthly_data, palette='Blues', width=0.5, fliersize=5)
 
 # 绘制每个月份的散点图
 colors = sns.color_palette('BuGn', n_colors=12)
