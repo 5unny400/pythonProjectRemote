@@ -39,7 +39,7 @@ class CreditBankFlowAnalysisTest(unittest.TestCase):
         # )
         # print(merged_df)
 
-        # 方法三： OK 处理了 0 ，nan 值结果直接是 nan
+        # 方法三： OK  处理了 0 结果为 0 ，nan 值结果直接是 nan
         # max_values = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("max")
         # max_values = max_values.replace(Decimal("0.0"), Decimal("1.0"))
         # merged_df["min_to_max_ratio"] = (
@@ -49,22 +49,23 @@ class CreditBankFlowAnalysisTest(unittest.TestCase):
         # )
         # print(merged_df)
 
-        # 方式四：OK 处理了 0 ，nan 值结果直接是 nan（）
-        # 使用 Decimal 类型进行除法操作，并处理除数为 0 的情况
-        merged_df["min_to_max_ratio"] = (
-            merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"]
-            .transform(lambda x: min(x) / max(x) if max(x) != 0 else Decimal(0))
-        )
-        print(merged_df)
-        values = 0.08130081300813008130081300813 + 0.1
-        print(values)
-        # 方式五：OK 处理了 0 ，nan 值结果直接是 nan
+        # 方式四：OK 处理了 0 结果为 nan，nan 值结果直接是 nan
         # max_values = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("max")
         # merged_df["min_to_max_ratio"] = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("min")
         # # 检查除数是否为零，将结果设为 NaN 或其他值
         # merged_df.loc[max_values != 0, "min_to_max_ratio"] /= max_values
         # merged_df.loc[max_values == 0, "min_to_max_ratio"] = np.nan
         # print(merged_df)
+
+        # 方式五：OK 处理了 0结果为 0 ，nan 值结果直接是 nan（）
+        # 使用 Decimal 类型进行除法操作，并处理除数为 0 的情况
+        merged_df["min_to_max_ratio"] = (
+            merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"]
+            .transform(lambda x: min(x) / max(x) if max(x) != 0 else Decimal(0))
+        )
+        print(merged_df)
+        # values = 0.08130081300813008130081300813 + 0.1
+        # print(values)
 
     def test_float_calculation(self):
         merged_df = self.sample_data().copy()
