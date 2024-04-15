@@ -18,7 +18,8 @@ class CreditBankFlowAnalysisTest(unittest.TestCase):
 
     def test_decimal_precise_calculation(self):
         merged_df = self.sample_data().copy()
-        # 方式一： 旧的 存在 decimal 为 0 的时候报错的问题
+        # 旧的 存在 decimal 为 0 的时候报错的问题
+        # print("-------------------------方式一--------------------------------")
         # merged_df["min_to_max_ratio"] = (
         #     merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"]
         #     .transform("min")
@@ -26,10 +27,10 @@ class CreditBankFlowAnalysisTest(unittest.TestCase):
         # )
         # print(merged_df)
 
-        # 方式二：存在逻辑问题：np.where 函数的用法是根据条件返回相应的值，但是你的代码中第三个参数在条件为真时应该返回一个 Series 或标量，
-        # 而不是执行的操作。此外，transform 函数返回的是一个 Series，所以直接调用 div 会对整个 Series 进行除法计算，可能会导致计算错误。
-        # 获取分母的最大值
+        # 方式二：改进的 np.where 还有错误
+        # print("---------------------------方式二------------------------------")
         # max_values = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("max")
+        # # 这里的 max_values!=0使用错误
         # merged_df["min_to_max_ratio"] = np.where(
         #     max_values != 0,
         #     merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"]
@@ -40,25 +41,32 @@ class CreditBankFlowAnalysisTest(unittest.TestCase):
         # print(merged_df)
 
         # 方法三： OK  处理了 0 结果为 0 ，nan 值结果直接是 nan
-        # max_values = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("max")
+        print("--------------------------方式三-------------------------------")
+        max_values = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("max")
+        # 如果没有 replace 就会报错 decimal.InvalidOperation: [<class 'decimal.DivisionUndefined'>]，max_values != 0,没有效果
         # max_values = max_values.replace(Decimal("0.0"), Decimal("1.0"))
-        # merged_df["min_to_max_ratio"] = (
-        #     merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"]
-        #     .transform("min")
-        #     .div(max_values)
-        # )
-        # print(merged_df)
+        max_values = max_values.replace(0, 1)
+        # fillna的方式没有用，没有解决除数为 0 的问题
+        # max_values.fillna(0, inplace=True)
+        merged_df["min_to_max_ratio"] = (
+            merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"]
+            .transform("min")
+            .div(max_values)
+        )
+        print(merged_df)
 
         # 方式四：OK 处理了 0 结果为 nan，nan 值结果直接是 nan
-        # max_values = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("max")
-        # merged_df["min_to_max_ratio"] = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("min")
-        # # 检查除数是否为零，将结果设为 NaN 或其他值
-        # merged_df.loc[max_values != 0, "min_to_max_ratio"] /= max_values
-        # merged_df.loc[max_values == 0, "min_to_max_ratio"] = np.nan
-        # print(merged_df)
+        print("------------------------方式四---------------------------------")
+        max_values = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("max")
+        merged_df["min_to_max_ratio"] = merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"].transform("min")
+        # 检查除数是否为零，将结果设为 NaN 或其他值
+        merged_df.loc[max_values != 0, "min_to_max_ratio"] /= max_values
+        merged_df.loc[max_values == 0, "min_to_max_ratio"] = np.nan
+        print(merged_df)
 
         # 方式五：OK 处理了 0结果为 0 ，nan 值结果直接是 nan（）
         # 使用 Decimal 类型进行除法操作，并处理除数为 0 的情况
+        print("----------------------------方式五-----------------------------")
         merged_df["min_to_max_ratio"] = (
             merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"]
             .transform(lambda x: min(x) / max(x) if max(x) != 0 else Decimal(0))
@@ -69,6 +77,7 @@ class CreditBankFlowAnalysisTest(unittest.TestCase):
 
     def test_float_calculation(self):
         merged_df = self.sample_data().copy()
+        # 如果不转为 float 那么也会报错 decimal.InvalidOperation: [<class 'decimal.DivisionUndefined'>]
         merged_df["abs_trade_amount_decimal_precise"] = merged_df["abs_trade_amount_decimal_precise"].astype(float)
         merged_df["min_to_max_ratio"] = (
             merged_df.groupby("oppo_account_name")["abs_trade_amount_decimal_precise"]

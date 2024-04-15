@@ -15,7 +15,7 @@ df['trade_date'] = pd.to_datetime(df['trade_date'])
 
 # 计算日期差
 # epoch = pd.Timestamp('2000-01-01')
-epoch = pd.Timestamp('1970-01-01')
+epoch = pd.Timestamp('1900-01-01')
 df['trade_date_days'] = (df['trade_date'] - epoch).dt.days
 
 # 假设 df 是包含 trade_date 列的 DataFrame
