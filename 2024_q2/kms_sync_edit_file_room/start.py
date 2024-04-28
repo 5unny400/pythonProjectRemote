@@ -11,6 +11,9 @@ socketio = SocketIO(app)
 rooms = {}  # Dictionary to store active rooms and their connection counts
 data_dict = {}  # Dictionary to store data for each doc_id
 
+# Dictionary to store last heartbeat time and doc_id for each client
+doc_id_and_last_activity_times_for_clients = []
+
 
 def check_room_connections():
     # Check if there are any rooms with zero connections
@@ -24,15 +27,25 @@ def check_room_connections():
         time.sleep(5)  # Check every 5 seconds
 
 
+
+
 def reduce_inactive_connections():
     # Reduce count for inactive connections
     for doc_id, count in rooms.items():
         if count > 0 and doc_id in data_dict:
             last_activity_time = data_dict[doc_id][-1].get('timestamp', 0)
+            # If last activity time is more than 10 seconds ago, reduce count by 1
             if time.time() - last_activity_time > 10:
                 rooms[doc_id] -= 1
                 print(f"Reducing connection count for room {doc_id} due to inactivity")
 
+# 监听心跳事件，更新对应的连接的last_activity_time
+@socketio.on('heartbeat')
+def handle_heartbeat(data):
+    doc_id = data['doc_id']
+    if doc_id in data_dict:
+        data_dict[doc_id][-1]['timestamp'] = time.time()
+        print(f"Received heartbeat from room {doc_id}")
 
 @socketio.on('connect')
 def handle_connect():

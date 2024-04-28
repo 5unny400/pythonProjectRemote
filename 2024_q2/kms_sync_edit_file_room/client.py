@@ -12,9 +12,51 @@ def send_and_receive_messages():
         # 模拟发送消息
         data = {
             'data': {
-                'doc_id': '123456',
-                'content': 'Hello, world!',
-                'timestamp': time.time()
+                "doc_id": "5678910",
+                "timestamp": time.time(),
+                "doc_version": 2,
+                "content": [
+                    {
+                        "module": "text",
+                        "id": "insertAfter",
+                        "user_id": 1,
+                        "position": 0,
+                        "value": "H",
+                        "site_id": "user_id_1",
+                        "timestamp": 1649875245000
+                    },
+                    # {
+                    #     "module": "text",
+                    #     "id": "delete",
+                    #     "user_id": 2,
+                    #     "position": 1,
+                    #     "value": "e",
+                    #     "site_id": "user_id_2",
+                    #     "timestamp": 1649875246000
+                    # },
+                    # {
+                    #     "module": "cell",
+                    #     "row_index": 1,
+                    #     "col_index": 1,
+                    #     "id": "insertAfter",
+                    #     "user_id": 2,
+                    #     "position": 2,
+                    #     "value": "l",
+                    #     "site_id": "user_id_1",
+                    #     "timestamp": 1649875247000
+                    # },
+                    # {
+                    #     "module": "cell",
+                    #     "row_index": 1,
+                    #     "col_index": 1,
+                    #     "id": "delete",
+                    #     "user_id": 3,
+                    #     "position": 2,
+                    #     "value": "l",
+                    #     "site_id": "user_id_1",
+                    #     "timestamp": 1649875247000
+                    # }
+                ]
             }
         }
         sio.emit('message', data)
@@ -45,7 +87,6 @@ def handle_message(data):
 
 # 连接到服务器
 sio.connect('http://localhost:5999', namespaces=['/'])
-
 
 # 等待连接关闭
 sio.wait()
