@@ -29,4 +29,4 @@ def edit_distance(s1, s2):
 s1 = "kitten"
 s2 = "sitting"
 # 编辑距离越短，说明两个字符串越相似
-print(edit_distance(s1, s2))  # Output: 3
+print("编辑距离：" + str(edit_distance(s1, s2)))  # Output: 3
