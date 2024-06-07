@@ -8,6 +8,7 @@ texts = [
     "Python and Java are both programming languages."
 ]
 
+
 # 定义一个函数来生成 MinHash 对象
 def get_minhash(text):
     tokens = re.findall(r'\w+', text.lower())  # 将文本转换为小写并提取单词
@@ -15,6 +16,7 @@ def get_minhash(text):
     for token in tokens:
         minhash.update(token.encode('utf8'))
     return minhash
+
 
 # 创建 MinHashLSHForest 对象
 forest = MinHashLSHForest(num_perm=128)
