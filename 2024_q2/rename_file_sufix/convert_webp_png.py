@@ -25,7 +25,7 @@ def convert_webp_to_png(directory):
                 print(f"Error converting {webp_file}: {e}")
     print(f"一共遍历了{cnt}张图片。")
 
+
 # 使用示例
-# directory_path = 'D:\\Administrator\\图片'  # 修改为你的目录路径
 directory_path = 'E:\\photos'  # 修改为你的目录路径
 convert_webp_to_png(directory_path)
