@@ -24,7 +24,7 @@ example_data = {
     "created_at": None,      # 直接返回 None 不会再 strftime
     "updated_at": datetime.strptime("2021-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"),
     # "error_time": "",     # 'str' object has no attribute 'strftime'
-    "error_time": NaT,    # NaTType does not support strftime
+    # "error_time": NaT,    # NaTType does not support strftime
     # "error_time": nan,      # 'float' object has no attribute 'strftime'
 
 }
