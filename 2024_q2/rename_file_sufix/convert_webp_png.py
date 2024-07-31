@@ -17,7 +17,7 @@ def convert_webp_to_png(directory):
                     img = img.convert('RGB')
                     # 保存为 PNG 格式的图片
                     img.save(png_file, 'PNG')
-                    print(str(index)+":"+png_file+"已修改为png格式！")
+                    print(str(index)+":"+webp_file+"已修改为png格式！")
                 # 删除原始的 WebP 格式图片
                 os.remove(webp_file)
                 index += 1
@@ -27,5 +27,5 @@ def convert_webp_to_png(directory):
 
 
 # 使用示例
-directory_path = 'E:\\photos'  # 修改为你的目录路径
+directory_path = 'E:\\Aphotos'  # 修改为你的目录路径
 convert_webp_to_png(directory_path)
