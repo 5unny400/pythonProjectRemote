@@ -1,0 +1,67 @@
+    def query_trade_opposite_account(self, params: BankFlowPotentialDetectAccountRequestSchema, is_all=False) \
+            -> Tuple[int, List[namedtuple('res', ['in_amount', 'out_amount', 'in_cnt', 'out_cnt', 'dis', 'opposite_account_name', 'ids', 'origin', 'opposite_relation'])]]:
+        """
+        对手分析模糊匹配关联方账户列表
+        查询关联方清单及关联关系 默认包含用户上传与启信宝穿透
+        """
+        # 流水数据子查询
+        sub_query = session.query(func.sum(func.IF(self._entity.trade_amount > 0, self._entity.trade_amount, 0)).label('sub_in_amount'),
+                                  func.sum(func.IF(self._entity.trade_amount < 0, self._entity.trade_amount, 0)).label('sub_out_amount'),
+                                  func.count(func.If(self._entity.trade_amount > 0, 1, None)).label('sub_in_cnt'),
+                                  func.count(func.If(self._entity.trade_amount < 0, 1, None)).label('sub_out_cnt'),
+                                  func.sum(self._entity.trade_amount).label('sub_dis'),
+                                  self.obfta.detect_account_name.label('sub_opposite_account_name'),
+                                  func.cast(func.json_arrayagg(self._entity.id), JSON).label('sub_ids'),
+                                  )
+        sub_query = self.base_common_filter(sub_query,
+                                            subject_id=params.subject_id,
+                                            bank_account_name=params.bank_account_name,
+                                            not_in_bank_account_name=params.not_in_bank_account_name,
+                                            opposite_account_name=params.detect_opposite_account_name,
+                                            not_in_opposite_account_name=params.not_in_detect_opposite_account_name,
+                                            exclude_repeat_trade=params.exclude_repeat_trade,
+                                            start_date=params.start_date,
+                                            end_date=params.end_date,
+                                            currency=params.currency,
+                                            has_artificial_check=params.has_artificial_check,
+                                            subject_type=params.subject_type,
+                                            task_id=params.task_id
+                                            )
+        sub_query = sub_query.group_by(self.obfta.detect_account_name).subquery()
+        account_query = session.query(
+            self.obfta.detect_account_name.label('account_opposite_account_name'),
+            func.cast(func.json_arrayagg(self.obfta.origin), JSON).label('account_origin'),
+            func.group_concat(func.distinct(self.obfta.relation)).label('sub_opposite_relation')
+        )
+        account_query = account_query.filter(self.obfta.task_id == params.task_id,
+                                             self.obfta.status != 0)
+        if params.detect_opposite_account_name:
+            account_query = self.filter_in_condition_with_none(account_query, self.obfta.detect_account_name, params.detect_opposite_account_name)
+        if params.origin:
+            account_query = account_query.filter(self.obfta.origin.op('&')(BankFlowAccountOrigin.covert_origin(params.origin) != 0))
+        else:
+            account_query = account_query.filter(or_(*[self.obfta.origin.op('&')(x) != 0 for x in self.default_relation_origin]))
+        account_query = account_query.group_by(self.obfta.detect_account_name).subquery()
+        query = session.query(
+            account_query.c.account_opposite_account_name.label('opposite_account_name'),
+            account_query.c.account_origin.label('origin'),
+            account_query.c.sub_opposite_relation.label('opposite_relation'),
+            func.IF(sub_query.c.sub_in_amount.is_(None), 0, sub_query.c.sub_in_amount).label('in_amount'),
+            func.IF(sub_query.c.sub_out_amount.is_(None), 0, sub_query.c.sub_out_amount).label('out_amount'),
+            sub_query.c.sub_in_cnt.label('in_cnt'),
+            sub_query.c.sub_out_cnt.label('out_cnt'),
+            func.IF(sub_query.c.sub_dis.is_(None), 0, sub_query.c.sub_dis).label('dis'),
+            sub_query.c.sub_ids.label('ids')
+        ).select_from(account_query)
+        query = query.outerjoin(sub_query, account_query.c.account_opposite_account_name == sub_query.c.sub_opposite_account_name)
+        if params.sort:
+            for sort_item in params.sort:
+                sort_item: BaseSortSchema
+                if sort_item.sort_type == 0:
+                    query = query.order_by(desc(sort_item.sort_field))
+                else:
+                    query = query.order_by(sort_item.sort_field)
+        if is_all:
+            return query.count(), query.all()
+        else:
+            return self.get_page_result(query, params.start, params.number)
