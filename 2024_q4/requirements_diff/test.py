@@ -8,7 +8,7 @@
 import openpyxl
 
 # 打开文件
-wb = openpyxl.load_workbook('依赖版本维护.xlsx')
+wb = openpyxl.load_workbook('依赖版本维护4.xlsx')
 # key 为依赖名称，value 为推荐版本
 standard_version = {}
 for sheetname in wb.sheetnames:
@@ -35,7 +35,7 @@ for service in ['bfa', 'cbl']:
             if name.lower() not in standard_version:
                 index += 1
                 print(f'{index:<3}{service:<5} {name:<20}推荐依赖不存在，实际版本为 {version}')
-            elif name.lower() in standard_version and version != standard_version[name.lower()]:
+            elif name.lower() in standard_version and version != str(standard_version[name.lower()]):
                 index += 1
                 print(f'{index:<3}{service:<5} {name:<20}推荐版本为 {standard_version[name.lower()]}，实际版本为 {version}')
         # 关闭文件
