@@ -23,7 +23,8 @@ for sheetname in wb.sheetnames:
 wb.close()
 
 
-for service in ['bfa', 'cbl']:
+# for service in ['bfa', 'cbl', 'api']:
+for service in ['api']:
     print('--------------------------------------------------------')
     print(f'------------------{service}依赖比对结果-------------------------')
     with open(f'{service}-requirements.txt', 'r', encoding='utf-8') as f:
@@ -37,6 +38,6 @@ for service in ['bfa', 'cbl']:
                 print(f'{index:<3}{service:<5} {name:<20}推荐依赖不存在，实际版本为 {version}')
             elif name.lower() in standard_version and version != str(standard_version[name.lower()]):
                 index += 1
-                print(f'{index:<3}{service:<5} {name:<20}推荐版本为 {standard_version[name.lower()]}，实际版本为 {version}')
+                print(f'{index:<3}{service:<5} {name}=={str(standard_version[name.lower()]):<10}推荐版本为 {standard_version[name.lower()]}，实际版本为 {version}')
         # 关闭文件
         f.close()
