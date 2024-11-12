@@ -8,9 +8,11 @@ import re
 
 phone_pattern = re.compile("^(?:(?:\+|00)86)?1[3-9]\d{9}$")
 
+
 def is_valid_phone(phone):
     return phone_pattern.match(phone)
     # return phone_pattern.search(phone)
+
 
 if __name__ == '__main__':
     print(is_valid_phone("13800138000"))
