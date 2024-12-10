@@ -8,7 +8,7 @@
 import openpyxl
 
 # 打开文件
-wb = openpyxl.load_workbook('依赖版本维护4.xlsx')
+wb = openpyxl.load_workbook('依赖版本维护 5.xlsx')
 # key 为依赖名称，value 为推荐版本
 standard_version = {}
 for sheetname in wb.sheetnames:
@@ -23,8 +23,8 @@ for sheetname in wb.sheetnames:
 wb.close()
 
 
-# for service in ['bfa', 'cbl', 'api']:
-for service in ['api']:
+# for service in ['bfa', 'cbl', 'api', 'fta']:
+for service in ['fta']:
     print('--------------------------------------------------------')
     print(f'------------------{service}依赖比对结果-------------------------')
     with open(f'{service}-requirements.txt', 'r', encoding='utf-8') as f:
