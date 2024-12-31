@@ -32,5 +32,11 @@ def get_distance_simplify(lat_a, lon_a, lat_b, lon_b):
     ly = r * radians(dy)  # 南北距离
     return sqrt(lx * lx + ly * ly)  # 用平面的矩形对角距离公式计算总距离
 
+for i in range(100):     # 测试100次
+    print(get_distance_simplify(39.910824, 116.468414, 39.923847, 116.424469))
 
-print(get_distance_simplify(39.912887, 116.466275, 39.912887, 116.466275))
+# 地址:北京市朝阳区景辉街16号院6号楼泰康集团大厦 经纬度: {'lng': 116.468414, 'lat': 39.910824}
+
+# address:北京市朝阳区景辉街16号院36号楼泰康集团大厦 result:{"lng": 116.468414, "lat": 39.910824}
+# 北京市东城区朝阳门内大街188号鸿安国际大厦 result:{"lng": 116.424469, "lat": 39.923847}
+
