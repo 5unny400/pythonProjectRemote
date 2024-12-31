@@ -2,6 +2,7 @@
 import time
 from datetime import datetime
 
+
 def timer(func):
     def wrapper(*args, **kwargs):
         start_time = datetime.now()
@@ -9,19 +10,22 @@ def timer(func):
         end_time = datetime.now()
         print(f"函数 {func.__name__} 执行时间为: {end_time - start_time} 秒")
         return result
+
     return wrapper
 
+
 # 命令行读取参数N，打印斐波那契数列前N位
-#1 1 2 3 5 8
+# 1 1 2 3 5 8
 @timer
 def feibo(num: int):
     if num == 1 or num == 2:
         return 1
     return feibo(num - 1) + feibo(num - 2)
 
+
 @timer
 def feibo2(num: int, feibo_list: list):
-    time.sleep(0.1)
+    time.sleep(0.01)
     if num == 1 or num == 2:
         return 1
     if not feibo_list[num - 1]:
