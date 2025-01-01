@@ -19,6 +19,7 @@ class Solution(object):
         result = list(ranking.items())
         # 排序
         result.sort(key=lambda x: (x[1], -ord(x[0])), reverse=True)
+        # 将 vid 从字符转换为对应的 ASCII 码，并用其相反数作为第二关键字，这样就与第一关键字保持一致，即都进行降序排序。
         return "".join([vid for vid, rank in result])
 
 
