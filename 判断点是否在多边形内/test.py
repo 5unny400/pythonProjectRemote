@@ -4,6 +4,7 @@
 @Author：shenxinyuan
 @Time：2025/1/16
 """
+from timeit import timeit
 
 
 def insideOrOutside(poly, dot):
@@ -61,4 +62,5 @@ def test_insideOrOutside():
 
 
 # 运行测试用例
+timeit()
 test_insideOrOutside()

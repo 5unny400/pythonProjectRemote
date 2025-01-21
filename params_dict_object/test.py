@@ -6,7 +6,8 @@
 """
 class MyClass:
     def __init__(self, value):
-        self.value = valueidps_document_processing_elementpositionpositionpositionpage_num length=
+        self.value = value
+        self.length = len(value)
 
 def my_function(my_dict):
     # 在函数中通过 . 引用对象的属性
