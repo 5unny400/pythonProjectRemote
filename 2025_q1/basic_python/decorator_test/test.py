@@ -23,6 +23,7 @@ def log2(text):
 
 # @log('execute')
 @log
+# @log2("execute")
 def now():
     print('2024-6-1')
 
